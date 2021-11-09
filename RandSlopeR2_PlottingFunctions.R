@@ -33,70 +33,39 @@ plotCheck = function(md, settings, ests, binfact=3, ptscale=5, ...) {
 	points(x, condRest, type="l", col="blue", lwd=2)   	 # between-individual variances estimated from model fit
 	abline(h = simVi)                                    # Vi from simulation settings
 	abline(h = estVi, col="blue")                        # Vi estimated from model fit
-	abline(h = meanVi, col="orange")                     # Vi estimated from using Johnson's method
-}
-
-
-#####################################################################################
-# plotFig2a
-# A function for plotting
-#####################################################################################
-# Arguments: ....
-# Value:     No specific return object
-plotFig2a = function(resEst, allsim, finalOrd, xlim=c(-0.4, 0.4)) {
-	par(mar=c(5,5,1,1))
-	plot((resEst[1,finalOrd]-allsim[finalOrd])/abs(allsim[finalOrd]), jitter(1:length(finalOrd)), ylab="", yaxt="n", ylim=c(1,length(finalOrd)), xlab="", xlim=xlim)
-	title(xlab="Proportional difference to simulated values\n(Est-Sim)/Sim", line=3.5)
-	axis(2, at=1:length(finalOrd), labels=finalOrd, las=1)
-	abline(v=0)
-	abline(h=1:I(length(finalOrd)+1)-0.5)
-	abline(h=c(1,4,7,8,12,16,19)-0.5, lwd=2)
-	for(i in 2:nsim) points((resEst[i,finalOrd]-allsim[finalOrd])/abs(allsim[finalOrd]), jitter(1:length(finalOrd)))
+	abline(h = meanVi, col="orange", lty=2)                     # Vi estimated from using Johnson's method
 }
 
 #####################################################################################
-# plotFig2b
+# plotFig2
 # A function for plotting 
 #####################################################################################
 # Arguments: ....
 # Value:     No specific return object
-plotFig2b = function(resEst, allsim, finalOrd, xlim=c(-2, 3.8)) {
-	par(mar=c(5,5,1,1))
-	plot(allsim[finalOrd], jitter(1:length(finalOrd)), ylab="", yaxt="n", ylim=c(1,length(finalOrd)), xlab="", xlim=xlim)
-	title(xlab="Absolute estimates", line=3.5)
-	axis(2, at=1:length(finalOrd), labels=finalOrd, las=1)
-	abline(v=0)
-	abline(h=1:I(length(finalOrd)+1)-0.5)
-	abline(h=c(1,4,7,8,12,16,19)-0.5, lwd=2)
-	for(i in 1:nrow(resEst)) points(resEst[i,finalOrd], jitter(1:length(finalOrd)))
-	segments(x0=allsim[finalOrd], x1=allsim[finalOrd], y0=1:length(finalOrd)-0.5, y1=1:length(finalOrd)+0.5, lwd=2, col="red")
-}
-
-#####################################################################################
-# plotFig2c
-# A function for plotting 
-#####################################################################################
-# Arguments: ....
-# Value:     No specific return object
-plotFig2c = function(resEst, allsim, main="") {
+plotFig2 = function(resEst, allsim, main="", plotminx=TRUE) {
 	if(main=="") par(mar=c(5,5,1,1))
 	if(main!="") par(mar=c(4.5,5,2,1))
-	xmin = allsim["meanX2"] -2*sqrt(allsim["Vx"])
-	xmax = allsim["meanX2"] +2*sqrt(allsim["Vx"])
+	#xmin = as.numeric(allsim["meanX2"]) -2.5*sqrt(as.numeric(allsim["Vx"]))
+	#xmax = as.numeric(allsim["meanX2"]) +2.5*sqrt(as.numeric(allsim["Vx"]))
+	if(allsim["errX"]=="0") xmin = mean(resEst[,"covxmin"])
+	if(allsim["errX"]=="0") xmax = mean(resEst[,"covxmax"])
+	if(allsim["errX"]!="0") xmin = -1.4
+	if(allsim["errX"]!="0") xmax = +2.4
 	x = seq(xmin,xmax,length.out=1001)
-	condR = allsim["Vu"] + 2*x*allsim["Cuv"] + x^2*allsim["Vv"]
+	condR = as.numeric(allsim["Vu"]) + x^2*as.numeric(allsim["Vv"]) + 2*x*as.numeric(allsim["Cuv"])
 	plot(x, condR, type="l", ylab="Between-individual variance", xlab="Covariate", main=main, ylim=c(0,6), cex.lab=1.4, yaxt="n", xaxt="n", xaxs="i") #  
 	abline(h=0)
+	axis(1, at=as.numeric(allsim["meanX"]), labels=bquote(bar(x)), las=1, cex.axis=1.2)
 	# Minimum value
 	col = rgbCol("darkolivegreen2")
 	for(i in 1:nrow(resEst)) {
-		segments(x0=-3, x1=resEst[i,"xmin"], y0=resEst[i,"minVix"], y1=resEst[i,"minVix"], col=col)
+		segments(x0=-4, x1=resEst[i,"xmin"], y0=resEst[i,"minVix"], y1=resEst[i,"minVix"], col=col)
 		segments(x0=resEst[i,"xmin"], x1=resEst[i,"xmin"], y0=-3, y1=resEst[i,"minVix"], col=col)
 	}
 	# random intercepts
 	col = rgbCol("lightblue")
 	for(i in 1:nrow(resEst)) {
-		segments(x0=-3, x1=0, y0=resEst[i,"Vu"], y1=resEst[i,"Vu"], col=col)
+		segments(x0=-4, x1=0, y0=resEst[i,"Vu"], y1=resEst[i,"Vu"], col=col)
 		segments(x0=0, x1=0, y0=-3, y1=resEst[i,"Vu"], col=col)
 	}
 	# Individual component
@@ -107,15 +76,15 @@ plotFig2c = function(resEst, allsim, main="") {
 	# Conditional repeatability
 	col = rgbCol("grey50")
 	for(i in 1:nrow(resEst)) {
-		condRest = resEst[i, "Vu"] + 2*x*resEst[i,"Cuv"] + x^2*resEst[i,"Vv"]
+		condRest = resEst[i, "Vu"] + x^2*resEst[i,"Vv"] + 2*x*resEst[i,"Cuv"]
 		points(x, condRest, type="l", col=col) 
 	}
 	# Average values
-	segments(x0=-3, x1=mean(resEst[,"xmin"]), y0=mean(resEst[,"minVix"]), y1=mean(resEst[,"minVix"]), col="green", lwd=4)
+	segments(x0=-4, x1=mean(resEst[,"xmin"]), y0=mean(resEst[,"minVix"]), y1=mean(resEst[,"minVix"]), col="green", lwd=4)
 	segments(x0=mean(resEst[,"xmin"]), x1=mean(resEst[,"xmin"]), y0=-3, y1=mean(resEst[,"minVix"]), col="green", lwd=4)
-	segments(x0=-3, x1=0, y0=mean(resEst[,"Vu"]), y1=mean(resEst[,"Vu"]), col="blue", lwd=4)
+	segments(x0=-4, x1=0, y0=mean(resEst[,"Vu"]), y1=mean(resEst[,"Vu"]), col="blue", lwd=4)
 	segments(x0=0, x1=0, y0=-3, y1=mean(resEst[,"Vu"]), col="blue", lwd=4)
-	abline(h=mean(resEst[,"Vu"]+resEst[,"Vv"]*resEst[,"Vx"]), lty=1, col="orangered", lwd=4)
+	abline(h=mean(resEst[,"Vi"]), lty=1, col="orangered", lwd=4)
 	# Simulated values
 	Vu = settings["Vu"]
 	Vv = settings["Vv"]
@@ -124,18 +93,18 @@ plotFig2c = function(resEst, allsim, main="") {
 	# Conditional repeatability
 	points(x, condR, type="l", lwd=2) 
 	# random intercepts
-	segments(x0=-3, x1=0, y0=allsim["Vu"], y1=allsim["Vu"], lwd=2)
-	segments(x0=0, x1=0, y0=-3, y1=allsim["Vu"], lwd=2)
+	segments(x0=-4, x1=0, y0=as.numeric(allsim["Vu"]), y1=as.numeric(allsim["Vu"]), lwd=2)
+	segments(x0=0, x1=0, y0=-3, y1=as.numeric(allsim["Vu"]), lwd=2)
 	axis(2, at=Vu, labels=expression("V"[u]), las=1, cex.axis=1.2)
 	axis(1, at=0, labels=0, las=1, cex.axis=1.2)
 	# Minimum value
-	segments(x0=-3, x1=allsim["xmin"], y0=allsim["minVix"], y1=allsim["minVix"], lwd=2)
-	segments(x0=allsim["xmin"], x1=allsim["xmin"], y0=-3, y1=allsim["minVix"], lwd=2)
-	axis(1, at=allsim["xmin"], labels=expression("x"[min]), las=1, cex.axis=1.2)
-	axis(2, at=allsim["minVix"], labels=expression(paste("min(V"["I,x"],") ")), las=1, cex.axis=1.2)
+	segments(x0=-4, x1=as.numeric(allsim["xmin"]), y0=as.numeric(allsim["minVix"]), y1=as.numeric(allsim["minVix"]), lwd=2)
+	segments(x0=as.numeric(allsim["xmin"]), x1=as.numeric(allsim["xmin"]), y0=-3, y1=as.numeric(allsim["minVix"]), lwd=2)
+	axis(1, at=as.numeric(allsim["xmin"]), labels=expression("x"[min]), las=1, cex.axis=1.2)
+	axis(2, at=as.numeric(allsim["minVix"]), labels=expression(paste("min(V"["I,x"],") ")), las=1, cex.axis=1.2)
 	# Indivudal component
-	abline(h=allsim["Vi"], lty=1, lwd=2)
-	axis(2, at=allsim["Vi"], labels=expression("V"[I]), las=2, cex.axis=1.2)
+	abline(h=as.numeric(allsim["Vi"]), lty=1, lwd=2)
+	axis(2, at=as.numeric(allsim["Vi"]), labels=expression("V"[I]), las=2, cex.axis=1.2)
 	box(lwd=2)
 }
 
