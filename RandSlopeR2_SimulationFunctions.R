@@ -20,7 +20,7 @@ varDecomp = function(alpha, betaX, betaX2, meanX, meanX2, Vx, Vx2, Vr, Vu, Vv, C
 	}
 	Sigma  = matrix(c(Vu, Cuv, Cuv, Vv), ncol=2)
 	Vf     = betaX^2 * Vx
-	Vi     = Vu + Vv*Vx + meanX^2 * Vv
+	Vi     = Vu + Vv*Vx + meanX^2*Vv + 2*meanX*Cuv
 	Vr     = Vr
 	Vo     = betaX2^2 * Vx2
 	Vp     = Vf + Vi + Vr + Vo
@@ -54,7 +54,7 @@ conditionalR = function(x, meanX, Vu, Vv, Cuv, vect=NULL) {
 		Vv  = as.numeric(vect["Vv"])
 		Cuv = as.numeric(vect["Cuv"])
 	}
-	Vix = Vu + 2*x*Cuv + x^2*Vv 
+	Vix = Vu + x^2*Vv + 2*x*Cuv
 	return(Vix)
 }
 
@@ -112,7 +112,8 @@ estExtr = function(mod, md, randSlopeOmitted) {
 # Value:     A data frame with simulated values (for the response, covariates and random effect levels)
 #            xOrg in the return object refers to the error-free covariate used for generating the response
 #            sloInd in the return object refers to the simulated random slope for each individual
-simData = function(nind, nrep, alpha, betaX, betaX2, meanX, meanX2, Vx, Vx2, Vr, Vu, Vv, Cuv, errX=0, balanced=FALSE, xdist=c("normal", "uniform", "lognorm"), vect=NULL) {
+simData = function(nind, nrep, alpha, betaX, betaX2, meanX, meanX2, Vx, Vx2, Vr, Vu, Vv, Cuv, errX=0, balanced=FALSE, 
+					xdist=c("normal", "uniform", "lognorm"), vect=NULL) {
 	if(!is.null(vect)) {
 		nind     = as.numeric(vect["nind"])
 		nrep     = as.numeric(vect["nrep"])
@@ -152,7 +153,6 @@ simData = function(nind, nrep, alpha, betaX, betaX2, meanX, meanX2, Vx, Vx2, Vr,
 		xasifnormal = rnorm(nind*nrep, meanX, sqrt(Vx*(1-errX)))
 		md$xOrg = runif(nind*nrep, 0, 1)
 		md$xOrg = scale(md$xOrg) * sd(xasifnormal) + mean(xasifnormal)
-
 	}
 	if(xdist=="lognorm") {
 		xasifnormal = rnorm(nind*nrep, meanX, sqrt(Vx*(1-errX)))
