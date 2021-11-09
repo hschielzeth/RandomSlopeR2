@@ -66,7 +66,7 @@ condR <- function(betaX, meanX, Vx, Vr, Vu, Vv, Cuv, Sigma=NULL, Vp=NULL, Vo=NUL
 	if(is.null(Vo)) Vo <- 0
 	Vo     <- sum(Vo)
 	Vf     <- betaX^2 * Vx
-	Vi     <- Vu + Vv*Vx + meanX^2 * Vv
+	Vi     <- Vu + Vv*Vx + meanX^2 * Vv + 2* meanX * Cuv
 	Vs     <- Vv*Vx + meanX^2 * Vv
 	if(is.null(Vp))
 		Vp <- Vf + Vi + Vr + Vo
