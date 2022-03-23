@@ -19,7 +19,7 @@ require(matrixcalc)
 require(lme4)
 sessionInfo()
 
-path = "C:\\Users\\Holger\\Documents\\A_PaperDrafts\\B_Submitted\\HS_RandomSlopeR2\\Submitted\\Submitted to MethEcolEvol\\"
+path = "PATH"
 
 source(paste0(path, "RandSlopeR2_SimulationFunctions.R"))
 source(paste0(path, "RandSlopeR2_PlottingFunctions.R"))
@@ -136,7 +136,8 @@ plot((allests[finalOrd]-as.numeric(allsim[finalOrd]))/abs(as.numeric(allsim[fina
 title(xlab="Proportional difference to simulated values\n(Est-Sim)/Sim", line=3.5)
 axis(2, at=1:length(finalOrd), labels=ylabs, las=1)
 axis(4, at=1:length(finalOrd), labels=paste0("= ", round(as.numeric(allsim[finalOrd]),2)), las=1, tick=FALSE, line=-0.3)
-mtext("Sim", 3, at=1.385, line=-0.1, adj=2)
+#mtext("Sim", 3, at=1.385, line=-0.1, adj=2)
+mtext("Sim", 3, at=1.856, line=-0.1, adj=2)
 abline(v=0, lwd=3)
 abline(h=1:I(length(finalOrd)+1)-0.5)
 abline(h=c(1,3,5,10,11,14,17,20,21)-0.5, lwd=2)

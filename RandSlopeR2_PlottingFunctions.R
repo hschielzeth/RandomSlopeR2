@@ -55,7 +55,8 @@ plotFig2 = function(resEst, allsim, main="", plotminx=TRUE) {
 	condR = as.numeric(allsim["Vu"]) + x^2*as.numeric(allsim["Vv"]) + 2*x*as.numeric(allsim["Cuv"])
 	plot(x, condR, type="l", ylab="Between-individual variance", xlab="Covariate", main=main, ylim=c(0,6), cex.lab=1.4, yaxt="n", xaxt="n", xaxs="i") #  
 	abline(h=0)
-	axis(1, at=as.numeric(allsim["meanX"]), labels=bquote(bar(x)), las=1, cex.axis=1.2)
+	#axis(1, at=as.numeric(allsim["meanX"]), labels=bquote(bar(x)), las=1, cex.axis=1.2)
+	axis(1, at=as.numeric(allsim["meanX"]), labels=expression(mu), las=1, cex.axis=1.2)
 	# Minimum value
 	col = rgbCol("darkolivegreen2")
 	for(i in 1:nrow(resEst)) {
