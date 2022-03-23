@@ -18,8 +18,9 @@
 #         will be prioritized over values given for Vu, Vv and Cuv
 # Vo:     Optional value or vector of other variance components 
 # Vp:     Total variance in response y (if NULL, Vp will be estimated from the components provided
-# xrange: Range of covariate values x for which the conditional repeatability is to be calculated
-#
+# xrange: Range of covariate values x for which the conditional repeatability is to be plotted (calculations are
+#         done based on Vx
+##
 # *Value* 
 # A list of variance components and ratios
 # Vf:     Variance explained by covariate x
@@ -32,8 +33,8 @@
 # CondR:  A data.frame of covariate values and conditional repeatabilities
 #
 # Reference:
-# Schielzeth, H. & Nakagawa, S. (2020). Conditional repeatability and the variance explained by reaction 
-#  	 	  norm variation in random slope models. bioRxiv doi: 10.1101/2020.1103.1111.987073@
+# Schielzeth, H. & Nakagawa, S. (2022). Conditional repeatability and the variance explained by reaction 
+# norm variation in random slope models. Methods in Ecology and Evolution (in press)
 #
 # Example:
 # Dummy data generation
@@ -66,7 +67,7 @@ condR <- function(betaX, meanX, Vx, Vr, Vu, Vv, Cuv, Sigma=NULL, Vp=NULL, Vo=NUL
 	if(is.null(Vo)) Vo <- 0
 	Vo     <- sum(Vo)
 	Vf     <- betaX^2 * Vx
-	Vi     <- Vu + Vv*Vx + meanX^2 * Vv + 2* meanX * Cuv
+	Vi     <- Vu + Vv*Vx + meanX^2*Vv + 2*meanX*Cuv
 	Vs     <- Vv*Vx + meanX^2 * Vv
 	if(is.null(Vp))
 		Vp <- Vf + Vi + Vr + Vo

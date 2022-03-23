@@ -13,10 +13,9 @@
 # minVix: Optional value for the minimum 
 # ...:    Range of covariate values x for which the conditional repeatability is to be calculated
 #
-
 # Reference:
-# Schielzeth, H. & Nakagawa, S. (2020). Conditional repeatability and the variance explained by reaction 
-#  	 	  norm variation in random slope models. bioRxiv doi: 10.1101/2020.1103.1111.987073@
+# Schielzeth, H. & Nakagawa, S. (2022). Conditional repeatability and the variance explained by reaction 
+# norm variation in random slope models. Methods in Ecology and Evolution (in press)
 #
 # Example:
 # Dummy data generation
